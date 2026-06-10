@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiger Claw — UI Primitives Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            tc: {
+              base: '#0A0A0A',
+              surface: '#1a1a1a',
+              ink: '#050505',
+              orange: '#E8722A',
+              green: '#4ADE80',
+              greenDeep: '#22C55E',
+            }
+          },
+          fontFamily: {
+            display: ['"Bebas Neue"', 'sans-serif'],
+            sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #0A0A0A; color: #f5f5f5; font-family: 'Space Grotesk', system-ui, sans-serif; margin: 0; overflow-x: hidden; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0A0A0A; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+    /* Glow utilities */
+    .glow-orange { box-shadow: 0 0 12px rgba(232,114,42,0.4), 0 0 24px rgba(232,114,42,0.2); }
+    .glow-orange-strong { box-shadow: 0 0 16px rgba(232,114,42,0.6), 0 0 40px rgba(232,114,42,0.3); }
+    .glow-green { box-shadow: 0 0 12px rgba(74,222,128,0.4), 0 0 24px rgba(74,222,128,0.2); }
+
+    /* Toggle switch */
+    .toggle-track { width: 52px; height: 28px; border-radius: 14px; background: #2a2a2a; border: 1px solid rgba(255,255,255,0.1); position: relative; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .toggle-track.active { background: #E8722A; border-color: #E8722A; box-shadow: 0 0 16px rgba(232,114,42,0.5), 0 0 32px rgba(232,114,42,0.25); }
+    .toggle-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 3px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .toggle-track.active .toggle-thumb { left: 26px; }
+
+    /* Slider vertical */
+    .v-slider { width: 12px; border-radius: 6px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); position: relative; cursor: pointer; overflow: hidden; }
+    .v-slider-fill { position: absolute; bottom: 0; left: 0; right: 0; border-radius: 6px; background: linear-gradient(to top, #E8722A, #ff9a5c); transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .v-slider:hover .v-slider-fill { box-shadow: 0 0 12px rgba(232,114,42,0.5) inset; }
+
+    /* Progress ring */
+    .progress-ring { transform: rotate(-90deg); }
+    .progress-ring circle { transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* Checkbox */
+    .tc-checkbox { width: 22px; height: 22px; border-radius: 4px; border: 2px solid rgba(255,255,255,0.2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+    .tc-checkbox.checked { background: #E8722A; border-color: #E8722A; box-shadow: 0 0 10px rgba(232,114,42,0.4); }
+    .tc-checkbox svg { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; }
+    .tc-checkbox.checked svg { opacity: 1; transform: scale(1); }
+
+    /* Card hover */
+    .tc-card { border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); border-radius: 12px; transition: all 0.3s ease; }
+    .tc-card:hover { border-color: rgba(232,114,42,0.3); background: rgba(255,255,255,0.04); box-shadow: 0 4px 24px rgba(232,114,42,0.08); }
+
+    /* Icon button */
+    .icon-btn { width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; color: rgba(255,255,255,0.6); }
+    .icon-btn:hover { border-color: rgba(232,114,42,0.5); color: #E8722A; background: rgba(232,114,42,0.08); box-shadow: 0 0 12px rgba(232,114,42,0.2); transform: translateY(-1px); }
+    .icon-btn:active { transform: scale(0.95); }
+
+    /* Nav arrow */
+    .nav-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; color: rgba(255,255,255,0.5); }
+    .nav-arrow:hover { border-color: #E8722A; color: #E8722A; box-shadow: 0 0 10px rgba(232,114,42,0.3); }
+
+    /* Bar chart animation */
+    .bar-animated { transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* Dropdown */
+    .tc-dropdown { border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px 14px; cursor: pointer; transition: all 0.2s ease; }
+    .tc-dropdown:hover { border-color: rgba(232,114,42,0.4); }
+    .tc-dropdown.open { border-color: #E8722A; box-shadow: 0 0 12px rgba(232,114,42,0.2); }
+
+    /* Pulse animation */
+    @keyframes pulse-glow { 0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(74,222,128,0.4); } 50% { opacity: 0.6; box-shadow: 0 0 12px rgba(74,222,128,0.6); } }
+    .pulse-green { animation: pulse-glow 2s ease-in-out infinite; }
+
+    /* Progress bar */
+    .progress-bar-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    /* Fade in on scroll */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* Section label */
+    .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+
+    /* Calendar day hover */
+    .cal-day { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: all 0.15s ease; color: rgba(255,255,255,0.7); }
+    .cal-day:hover { background: rgba(232,114,42,0.15); color: #E8722A; }
+    .cal-day.active { background: #E8722A; color: #000; font-weight: 600; }
+    .cal-day.today { border: 1px solid #E8722A; color: #E8722A; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-tc-orange flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <span class="font-bold text-lg tracking-tight">TIGER CLAW</span>
+        <span class="text-white/30 text-sm hidden sm:inline font-mono">/ primitives</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5">
+          <span class="w-2 h-2 rounded-full bg-tc-green pulse-green"></span>
+          <span class="text-xs tracking-wide text-white/80 font-mono">INTERACTIVE</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+    <!-- Title -->
+    <div class="mb-16 fade-in">
+      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-display leading-[0.9]">
+        UI <span class="text-tc-orange">PRIMITIVES</span>
+      </h1>
+      <p class="text-white/60 mt-4 max-w-2xl text-lg">
+        Interactive component gallery for the Tiger Claw design system. Dark, high-contrast, neo-brutalist. Hover, click, and interact with every element.
+      </p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Navigation & Controls
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Navigation & Controls</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6">
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+          <button class="nav-arrow" title="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+          <button class="nav-arrow" title="Forward"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <div class="w-px h-6 bg-white/10 mx-1"></div>
+          <button class="nav-arrow" title="Previous"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="nav-arrow" title="Pause"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></button>
+          <button class="nav-arrow" title="Stop"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></button>
+          <button class="nav-arrow" title="Star"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+          <button class="nav-arrow" title="Next"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="mb-6">
+          <div class="h-2 rounded-full bg-white/5 border border-white/5 overflow-hidden cursor-pointer" id="progressBarTrack">
+            <div class="h-full rounded-full bg-tc-orange progress-bar-fill" id="progressBarFill" style="width: 65%"></div>
+          </div>
+        </div>
+
+        <!-- Icon buttons row -->
+        <div class="flex flex-wrap gap-3">
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Inputs & Search
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Inputs & Search</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <!-- Search input -->
+        <div class="tc-card p-6">
+          <label class="text-xs text-white/40 font-mono uppercase tracking-wider mb-2 block">Search</label>
+          <div class="relative">
+            <input type="text" placeholder="Search prospects..." class="w-full px-4 py-3 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 font-sans text-sm focus:outline-none focus:border-tc-orange focus:shadow-[0_0_12px_rgba(232,114,42,0.2)] transition-all" />
+            <svg class="absolute right-3 top-1/2 -translate-y-1/2 text-white/40" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+        </div>
+
+        <!-- Text input -->
+        <div class="tc-card p-6">
+          <label class="text-xs text-white/40 font-mono uppercase tracking-wider mb-2 block">Text Field</label>
+          <input type="text" placeholder="Enter prospect name..." class="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 font-sans text-sm focus:outline-none focus:border-tc-orange focus:shadow-[0_0_12px_rgba(232,114,42,0.2)] transition-all" />
+          <p class="text-xs text-white/30 mt-2 font-mono">Adipiscing elit, sed diam</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Buttons & Toggles
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Buttons & Toggles</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Primary button -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <button class="px-8 py-3.5 rounded-full font-semibold text-black bg-tc-orange transition-all duration-300 hover:brightness-110 hover:scale-[1.04] hover:shadow-[0_4px_30px_rgba(232,114,42,0.5)] active:scale-95">
+            Deploy Tiger
+          </button>
+          <span class="text-xs text-white/40 font-mono">Primary CTA</span>
+        </div>
+
+        <!-- Secondary button -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <button class="px-8 py-3.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/25 text-white/80 font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-95">
+            Read Manifesto
+          </button>
+          <span class="text-xs text-white/40 font-mono">Secondary</span>
+        </div>
+
+        <!-- Disabled button -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <button class="px-8 py-3.5 rounded-lg bg-white/5 border border-white/5 text-white/25 font-semibold cursor-not-allowed" disabled>
+            Button Off
+          </button>
+          <span class="text-xs text-white/40 font-mono">Disabled</span>
+        </div>
+
+        <!-- Toggle ON -->
+        <div class="tc-card p-6 flex flex-col items-center gap-4">
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-white/60">Button On</span>
+            <div class="toggle-track active" onclick="this.classList.toggle('active')">
+              <div class="toggle-thumb"></div>
+            </div>
+          </div>
+          <span class="text-xs text-white/40 font-mono">Toggle (click me)</span>
+        </div>
+
+        <!-- Toggle OFF -->
+        <div class="tc-card p-6 flex flex-col items-center gap-4">
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-white/60">Button Off</span>
+            <div class="toggle-track" onclick="this.classList.toggle('active')">
+              <div class="toggle-thumb"></div>
+            </div>
+          </div>
+          <span class="text-xs text-white/40 font-mono">Toggle (click me)</span>
+        </div>
+
+        <!-- Small pill buttons -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <div class="flex gap-2">
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono bg-white/5 border border-white/10 text-white/60 cursor-pointer hover:border-tc-orange hover:text-tc-orange transition-all">Lorem</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono bg-tc-orange/15 border border-tc-orange/40 text-tc-orange cursor-pointer hover:bg-tc-orange/25 transition-all">Dolor sit</span>
+          </div>
+          <span class="text-xs text-white/40 font-mono">Tag pills</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Progress Rings & Gauges
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Progress Rings & Gauges</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <!-- Ring 150 -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <div class="relative w-[120px] h-[120px]" id="ring1">
+            <svg class="progress-ring w-full h-full" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#E8722A" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="130.69" class="ring-progress"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-2xl font-bold text-white">150</span>
+              <span class="text-xs text-white/40 font-mono">Prospects</span>
+            </div>
+          </div>
+          <span class="text-xs text-white/40 font-mono">60% ring</span>
+        </div>
+
+        <!-- Ring 90 -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <div class="relative w-[120px] h-[120px]" id="ring2">
+            <svg class="progress-ring w-full h-full" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#E8722A" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="32.67" class="ring-progress"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-2xl font-bold text-white">90</span>
+              <span class="text-xs text-white/40 font-mono">Score</span>
+            </div>
+          </div>
+          <span class="text-xs text-white/40 font-mono">90% ring</span>
+        </div>
+
+        <!-- Ring with counter -->
+        <div class="tc-card p-6 flex flex-col items-center gap-3">
+          <div class="relative w-[120px] h-[120px]" id="ring3">
+            <svg class="progress-ring w-full h-full" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#4ADE80" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="0" class="ring-progress"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-lg font-bold text-tc-green">100↑</span>
+              <span class="text-xs text-white/40 font-mono">Complete</span>
+            </div>
+          </div>
+          <span class="text-xs text-white/40 font-mono">100% ring (green)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Vertical Sliders / Equalizer
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Vertical Sliders</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6">
+        <div class="flex items-end justify-center gap-4 h-[180px]" id="sliderGroup">
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 85%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 60%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 95%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 40%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 70%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 55%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 80%"></div></div>
+          <div class="v-slider h-full" onclick="randomizeSlider(this)"><div class="v-slider-fill" style="height: 30%"></div></div>
+        </div>
+        <p class="text-center text-xs text-white/30 font-mono mt-4">Click any slider to randomize</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Calendar
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Calendar</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6 max-w-sm">
+        <!-- Calendar header -->
+        <div class="flex items-center justify-between mb-4">
+          <button class="nav-arrow" onclick="changeMonth(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="text-tc-orange font-semibold text-sm" id="calMonth">June</span>
+          <button class="nav-arrow" onclick="changeMonth(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+        <!-- Day headers -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+          <span class="text-center text-[10px] text-white/30 font-mono">sun</span>
+          <span class="text-center text-[10px] text-white/30 font-mono">mon</span>
+          <span class="text-center text-[10px] text-white/30 font-mono">tue</span>
+          <span class="text-center text-[10px] text-white/30 font-mono">wed</span>
+          <span class="text-center text-[10px] text-white/30 font-mono">thu</span>
+          <span class="text-center text-[10px] text-white/30 font-mono">fri</span>
+          <span class="text-center text-[10px] text-white/30 font-mono">sat</span>
+        </div>
+        <!-- Days grid -->
+        <div class="grid grid-cols-7 gap-1" id="calGrid"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Information Cards
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Information Cards</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Info card -->
+        <div class="tc-card p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-1 h-5 rounded-full bg-tc-orange"></div>
+            <span class="text-tc-orange font-semibold text-sm">Information</span>
+          </div>
+          <p class="text-white/60 text-sm leading-relaxed">Tiger Claw keeps the thread clear so serious conversations do not die from delay.</p>
+        </div>
+
+        <!-- Stat card -->
+        <div class="tc-card p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-1 h-5 rounded-full bg-tc-orange"></div>
+            <span class="text-tc-orange font-semibold text-sm">Ipsum</span>
+          </div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-3xl font-bold text-white font-display">100↑</span>
+            <span class="text-xs text-white/40 font-mono">Prospects</span>
+          </div>
+          <p class="text-white/50 text-xs leading-relaxed">Consectetuer adipiscing elit, sed diam.</p>
+        </div>
+
+        <!-- Feature panel with glow -->
+        <div class="tc-card p-6 relative overflow-hidden">
+          <div class="absolute -top-12 -right-12 w-40 h-40 rounded-full blur-[80px] opacity-20 bg-tc-orange"></div>
+          <p class="relative font-semibold text-lg mb-2">Tiger Brain</p>
+          <p class="relative text-white/50 text-sm">Remembers every prospect detail across all conversations.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Bar Chart
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Statistics / Bar Chart</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-white">Statistics</span>
+            <button class="tc-dropdown px-3 py-1 text-xs text-white/60 flex items-center gap-1" onclick="this.classList.toggle('open')">
+              Weekly <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+          <button class="text-xs text-tc-orange font-mono hover:underline cursor-pointer" onclick="randomizeBars()">Randomize</button>
+        </div>
+        <!-- Progress bar above chart -->
+        <div class="h-1.5 rounded-full bg-white/5 mb-6 overflow-hidden">
+          <div class="h-full rounded-full bg-tc-orange progress-bar-fill" style="width: 72%"></div>
+        </div>
+        <!-- Bar chart -->
+        <div class="flex items-end gap-3" style="height: 160px" id="barChart">
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 40%; background: rgba(232,114,42,0.8)"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">S</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 65%; background: rgba(232,114,42,0.8)"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">M</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 85%; background: #E8722A"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">T</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 100%; background: #E8722A"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">W</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 70%; background: rgba(232,114,42,0.8)"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">T</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 50%; background: rgba(232,114,42,0.6)"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">F</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-end h-full">
+            <div class="w-full rounded-t-md bar-animated" style="height: 30%; background: rgba(232,114,42,0.5)"></div>
+            <span class="text-[10px] text-white/40 font-mono mt-2">S</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Line Chart / Area Graph
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Line Chart / Area Graph</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-semibold text-white">Consectetuer</span>
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+            <span class="text-xs text-white/60 font-mono">4500</span>
+          </div>
+        </div>
+        <div class="relative h-[140px]" id="lineChartContainer">
+          <svg width="100%" height="100%" viewBox="0 0 400 140" preserveAspectRatio="none" id="lineChart">
+            <!-- Grid lines -->
+            <line x1="0" y1="35" x2="400" y2="35" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="0" y1="70" x2="400" y2="70" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="0" y1="105" x2="400" y2="105" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <!-- Area fill -->
+            <path d="M0,120 C30,110 60,100 100,80 C140,60 160,90 200,70 C240,50 280,30 320,45 C360,60 380,40 400,35 L400,140 L0,140 Z" fill="url(#orangeGradient)" opacity="0.3"/>
+            <!-- Line -->
+            <path d="M0,120 C30,110 60,100 100,80 C140,60 160,90 200,70 C240,50 280,30 320,45 C360,60 380,40 400,35" fill="none" stroke="#E8722A" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Dots -->
+            <circle cx="100" cy="80" r="4" fill="#E8722A" class="cursor-pointer"/>
+            <circle cx="200" cy="70" r="4" fill="#E8722A" class="cursor-pointer"/>
+            <circle cx="320" cy="45" r="4" fill="#E8722A" class="cursor-pointer"/>
+            <circle cx="400" cy="35" r="4" fill="#E8722A" class="cursor-pointer"/>
+            <defs>
+              <linearGradient id="orangeGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E8722A" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#E8722A" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="flex justify-between mt-2">
+          <span class="text-[10px] text-white/30 font-mono">Dolor sit</span>
+          <span class="px-3 py-1 rounded-full text-xs font-mono bg-tc-orange/15 border border-tc-orange/40 text-tc-orange">Lorem ipsum</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Dropdowns & Selects
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Dropdowns & Selects</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="tc-card p-6">
+          <label class="text-xs text-white/40 font-mono uppercase tracking-wider mb-2 block">Select Menu</label>
+          <div class="relative" id="dropdown1">
+            <button class="tc-dropdown w-full flex items-center justify-between" onclick="toggleDropdown('dropdown1')">
+              <span class="text-sm text-white/70">Select menu</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/40 transition-transform" id="dropdown1Arrow"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="absolute top-full left-0 right-0 mt-1 rounded-lg bg-[#1a1a1a] border border-white/10 shadow-xl overflow-hidden hidden z-10" id="dropdown1Menu">
+              <div class="px-4 py-2.5 text-sm text-white/70 hover:bg-tc-orange/10 hover:text-tc-orange cursor-pointer transition-colors">Follow-up queue</div>
+              <div class="px-4 py-2.5 text-sm text-white/70 hover:bg-tc-orange/10 hover:text-tc-orange cursor-pointer transition-colors">Active prospects</div>
+              <div class="px-4 py-2.5 text-sm text-white/70 hover:bg-tc-orange/10 hover:text-tc-orange cursor-pointer transition-colors">Archived threads</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tc-card p-6">
+          <label class="text-xs text-white/40 font-mono uppercase tracking-wider mb-2 block">Select Menu</label>
+          <div class="relative" id="dropdown2">
+            <button class="tc-dropdown w-full flex items-center justify-between" onclick="toggleDropdown('dropdown2')">
+              <span class="text-sm text-white/70">Select menu</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/40 transition-transform" id="dropdown2Arrow"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="absolute top-full left-0 right-0 mt-1 rounded-lg bg-[#1a1a1a] border border-white/10 shadow-xl overflow-hidden hidden z-10" id="dropdown2Menu">
+              <div class="px-4 py-2.5 text-sm text-white/70 hover:bg-tc-orange/10 hover:text-tc-orange cursor-pointer transition-colors">Daily digest</div>
+              <div class="px-4 py-2.5 text-sm text-white/70 hover:bg-tc-orange/10 hover:text-tc-orange cursor-pointer transition-colors">Weekly summary</div>
+              <div class="px-4 py-2.5 text-sm text-white/70 hover:bg-tc-orange/10 hover:text-tc-orange cursor-pointer transition-colors">Monthly report</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Checkboxes & Lists
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Checkboxes & Lists</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6 max-w-md">
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 cursor-pointer group" onclick="toggleCheckbox(this)">
+            <div class="tc-checkbox checked">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="text-sm text-white/80 group-hover:text-white transition-colors">Lorem ipsum</span>
+          </div>
+          <div class="flex items-center gap-3 cursor-pointer group" onclick="toggleCheckbox(this)">
+            <div class="tc-checkbox">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="text-sm text-white/80 group-hover:text-white transition-colors">Sed nonummy</span>
+          </div>
+          <div class="flex items-center gap-3 cursor-pointer group" onclick="toggleCheckbox(this)">
+            <div class="tc-checkbox">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="text-sm text-white/80 group-hover:text-white transition-colors">Duis autem vel</span>
+          </div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-white/5">
+          <button class="px-6 py-2.5 rounded-lg bg-tc-orange text-black font-semibold text-sm transition-all hover:brightness-110 hover:shadow-[0_4px_20px_rgba(232,114,42,0.4)] active:scale-95">
+            See details
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Status Chip & Nav Pill
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Status & Navigation</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <!-- Status chip -->
+        <div class="tc-card p-6 flex flex-col items-center gap-4">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5">
+            <span class="w-2.5 h-2.5 rounded-full bg-tc-green pulse-green"></span>
+            <span class="text-xs tracking-wide text-white/80 font-mono">SYSTEM OPERATIONAL</span>
+          </div>
+          <span class="text-xs text-white/40 font-mono">Status chip</span>
+        </div>
+
+        <!-- Floating nav pill -->
+        <div class="tc-card p-6 flex flex-col items-center gap-4">
+          <nav class="flex items-center gap-1 px-2 py-2 rounded-full bg-[#1a1a1a]/80 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/40">
+            <span class="px-3 py-1.5 text-white/85 text-xs font-semibold rounded-full cursor-pointer hover:bg-white/5 transition-all">Problem</span>
+            <span class="px-3 py-1.5 text-white/85 text-xs font-semibold rounded-full bg-white/5 cursor-pointer hover:bg-white/10 transition-all">Pricing</span>
+            <span class="px-3 py-1.5 text-black text-xs font-semibold rounded-full bg-tc-orange cursor-pointer hover:brightness-110 transition-all">Get started</span>
+          </nav>
+          <span class="text-xs text-white/40 font-mono">Floating nav pill</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SECTION: Sidebar Icon Rail
+    ════════════════════════════════════════════════════════════════════ -->
+    <section class="mb-16 fade-in">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="section-label">Sidebar Icon Rail</span>
+        <span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <div class="tc-card p-6 flex gap-6">
+        <!-- Vertical icon rail -->
+        <div class="flex flex-col gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/5">
+          <button class="icon-btn !w-10 !h-10 !rounded-lg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+          <button class="icon-btn !w-10 !h-10 !rounded-lg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+          <button class="icon-btn !w-10 !h-10 !rounded-lg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></button>
+          <button class="icon-btn !w-10 !h-10 !rounded-lg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+        </div>
+        <div class="flex-1 flex items-center justify-center">
+          <p class="text-white/30 text-sm font-mono text-center">Vertical icon rail — hover to light up</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 bg-[#050505] py-8">
+    <div class="max-w-7xl mx-auto px-6 text-center text-white/40 text-sm font-mono">
+      Tiger Claw UI Primitives · Mariah Marketing LLC
+    </div>
+  </footer>
+
+  <script>
+    // ─── Fade-in on scroll ───────────────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '-40px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ─── Toggle checkbox ─────────────────────────────────────────────
+    function toggleCheckbox(row) {
+      const cb = row.querySelector('.tc-checkbox');
+      cb.classList.toggle('checked');
+    }
+
+    // ─── Dropdown toggle ─────────────────────────────────────────────
+    function toggleDropdown(id) {
+      const container = document.getElementById(id);
+      const menu = container.querySelector('[id$="Menu"]');
+      const arrow = container.querySelector('[id$="Arrow"]');
+      const btn = container.querySelector('.tc-dropdown');
+      const isOpen = !menu.classList.contains('hidden');
+
+      // Close all dropdowns first
+      document.querySelectorAll('[id$="Menu"]').forEach(m => m.classList.add('hidden'));
+      document.querySelectorAll('.tc-dropdown').forEach(b => b.classList.remove('open'));
+
+      if (!isOpen) {
+        menu.classList.remove('hidden');
+        btn.classList.add('open');
+      }
+    }
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[id^="dropdown"]')) {
+        document.querySelectorAll('[id$="Menu"]').forEach(m => m.classList.add('hidden'));
+        document.querySelectorAll('.tc-dropdown').forEach(b => b.classList.remove('open'));
+      }
+    });
+
+    // ─── Randomize sliders ───────────────────────────────────────────
+    function randomizeSlider(el) {
+      const fill = el.querySelector('.v-slider-fill');
+      fill.style.height = (20 + Math.random() * 80) + '%';
+    }
+
+    // ─── Randomize bar chart ─────────────────────────────────────────
+    function randomizeBars() {
+      const bars = document.querySelectorAll('#barChart .bar-animated');
+      bars.forEach(bar => {
+        const h = 20 + Math.random() * 80;
+        bar.style.height = h + '%';
+      });
+    }
+
+    // ─── Calendar ────────────────────────────────────────────────────
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    let currentMonth = 5; // June (0-indexed)
+    let currentYear = 2026;
+    let selectedDay = 9;
+
+    function renderCalendar() {
+      document.getElementById('calMonth').textContent = months[currentMonth];
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const today = new Date();
+      const isCurrentMonth = today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+
+      // Empty cells for offset
+      for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += '<div></div>';
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const isToday = isCurrentMonth && d === today.getDate();
+        const isSelected = d === selectedDay;
+        let cls = 'cal-day';
+        if (isSelected) cls += ' active';
+        else if (isToday) cls += ' today';
+        grid.innerHTML += `<div class="${cls}" onclick="selectDay(${d})">${d}</div>`;
+      }
+    }
+
+    function selectDay(d) {
+      selectedDay = d;
+      renderCalendar();
+    }
+
+    function changeMonth(dir) {
+      currentMonth += dir;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      selectedDay = null;
+      renderCalendar();
+    }
+
+    renderCalendar();
+
+    // ─── Progress bar click to set ───────────────────────────────────
+    document.getElementById('progressBarTrack').addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      document.getElementById('progressBarFill').style.width = pct + '%';
+    });
+
+    // ─── Animate rings on scroll ─────────────────────────────────────
+    const ringObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const circles = entry.target.querySelectorAll('.ring-progress');
+          circles.forEach(c => {
+            const target = c.getAttribute('stroke-dashoffset');
+            c.style.strokeDashoffset = '326.73';
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                c.style.strokeDashoffset = target;
+              });
+            });
+          });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[id^="ring"]').forEach(el => ringObserver.observe(el));
+  </script>
+</body>
+</html>
