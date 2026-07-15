@@ -503,4 +503,32 @@ function Stepper({ steps = 4, current = 1 }) {
     </button>
   ))}
 </div>`,
+
+  "Video Primitives": `// YouTube video card primitives — 1920×1080
+// Intro Card (after hook, 5 sec)
+<div className="rounded-lg overflow-hidden border border-tc-border">
+  <img
+    src="/assets/video-intro-card.png"
+    alt="Intro Card — Before/After AI"
+    className="w-full h-auto"
+  />
+</div>
+
+// Middle Card (mid-roll, 3 sec)
+<div className="rounded-lg overflow-hidden border border-tc-border">
+  <img
+    src="/assets/video-middle-card.png"
+    alt="Middle Card — Take Action Today"
+    className="w-full h-auto"
+  />
+</div>
+
+// CTA Card (end screen, 5-8 sec)
+<div className="rounded-lg overflow-hidden border border-tc-border">
+  <img
+    src="/assets/video-cta-card.png"
+    alt="CTA Card — Free Beginner Guide"
+    className="w-full h-auto"
+  />
+</div>`,
 };

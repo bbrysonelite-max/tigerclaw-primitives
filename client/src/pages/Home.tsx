@@ -3,6 +3,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 import { CopyCodeButton } from "@/components/CopyCodeButton";
 import { codeSnippets } from "@/lib/codeSnippets";
+import { InstagramPrimitive, TikTokPrimitive, EmailPrimitive, FacebookPrimitive, YouTubePrimitive, ThreadsPrimitive, PinterestPrimitive, LinkedInPrimitive, XPrimitive, DiscordPrimitive } from "@/components/SocialPrimitives";
 
 // ─── Section wrapper with fade-in on scroll ─────────────────────────────────
 const SECTION_LABELS = [
@@ -26,6 +27,17 @@ const SECTION_LABELS = [
   "Dock",
   "Particle Background",
   "Stepper",
+  "Video Primitives",
+  "Instagram",
+  "TikTok",
+  "Email",
+  "Facebook",
+  "YouTube (Social)",
+  "Threads",
+  "Pinterest",
+  "LinkedIn",
+  "X (Twitter)",
+  "Discord",
   "Status & Navigation",
   "Sidebar Icon Rail",
 ];
@@ -1002,6 +1014,89 @@ export default function Home() {
               </div>
             </div>
           </Card>
+        </Section>
+
+        {/* Video Primitives */}
+        <Section label="Video Primitives">
+          <p className="text-sm text-tc-muted mb-6 font-mono">YouTube video cards — intro (after hook), mid-roll engagement, and end-screen CTA. 1920×1080, Tiger Claw branded.</p>
+          <div className="grid gap-6">
+            {/* Intro Card */}
+            <div className="space-y-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-tc-orange">Intro Card — After Hook (5 sec)</span>
+              <div className="rounded-lg overflow-hidden border border-tc-border">
+                <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663056989091/82pDhBDaL54XDaECAwfQPP/video-intro-card-cas6dJdxUP5MhCwmdU3P2S.webp" alt="Tiger Claw YouTube Intro Card - Before and After AI transformation" className="w-full h-auto" />
+              </div>
+              <p className="text-xs text-tc-muted">Before AI → After AI with glowing eyes. "25 Years at the Top • Now Building with AI"</p>
+            </div>
+            {/* Middle Card */}
+            <div className="space-y-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-tc-orange">Middle Card — Mid-Roll (3 sec)</span>
+              <div className="rounded-lg overflow-hidden border border-tc-border">
+                <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663056989091/82pDhBDaL54XDaECAwfQPP/video-middle-card-W2DaquygD2dHbmGhEUiMFw.webp" alt="Tiger Claw YouTube Middle Card - Take Action Today" className="w-full h-auto" />
+              </div>
+              <p className="text-xs text-tc-muted">Re-hook: "Something you can take action on today to build your business"</p>
+            </div>
+            {/* CTA Card */}
+            <div className="space-y-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-tc-orange">CTA Card — End Screen (5-8 sec)</span>
+              <div className="rounded-lg overflow-hidden border border-tc-border">
+                <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663056989091/82pDhBDaL54XDaECAwfQPP/video-cta-card-K5xj7GM9DQLZHaadZa54fF.webp" alt="Tiger Claw YouTube CTA Card - Free Beginner Guide" className="w-full h-auto" />
+              </div>
+              <p className="text-xs text-tc-muted">Lead magnet: Free AI + Network Marketing Beginner Guide → stan.store/brentbryson. Like / Subscribe / Follow.</p>
+            </div>
+          </div>
+        </Section>
+
+        {/* ─── SOCIAL MEDIA PRIMITIVES ─── */}
+
+        {/* Instagram */}
+        <Section label="Instagram">
+          <InstagramPrimitive />
+        </Section>
+
+        {/* TikTok */}
+        <Section label="TikTok">
+          <TikTokPrimitive />
+        </Section>
+
+        {/* Email */}
+        <Section label="Email">
+          <EmailPrimitive />
+        </Section>
+
+        {/* Facebook */}
+        <Section label="Facebook">
+          <FacebookPrimitive />
+        </Section>
+
+        {/* YouTube (Social) */}
+        <Section label="YouTube (Social)">
+          <YouTubePrimitive />
+        </Section>
+
+        {/* Threads */}
+        <Section label="Threads">
+          <ThreadsPrimitive />
+        </Section>
+
+        {/* Pinterest */}
+        <Section label="Pinterest">
+          <PinterestPrimitive />
+        </Section>
+
+        {/* LinkedIn */}
+        <Section label="LinkedIn">
+          <LinkedInPrimitive />
+        </Section>
+
+        {/* X (Twitter) */}
+        <Section label="X (Twitter)">
+          <XPrimitive />
+        </Section>
+
+        {/* Discord */}
+        <Section label="Discord">
+          <DiscordPrimitive />
         </Section>
 
         {/* Status & Navigation */}
