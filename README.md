@@ -33,3 +33,14 @@ pnpm dev
 - Primary accent: `#E8722A` (Tiger Claw orange)
 - Signal green: `#4ADE80`
 - Fonts: Bebas Neue (display), Space Grotesk (UI), IBM Plex Mono (labels)
+
+## Canonical tokens
+The full machine-readable token set lives in [`tokens.json`](./tokens.json), with a human-readable companion (and drift log) in [`TOKENS.md`](./TOKENS.md). Source of truth for values is `client/src/index.css`; the root `index.html` is a legacy static build that duplicates tokens — known differences are documented in TOKENS.md under "Drift found".
+
+## Consumers
+This repo's tokens power the following shipped properties — do not change values without checking all of them:
+- brentbryson.ai
+- tigerclaw.io
+- Dashboard
+- Admin Dashboard
+- Brag Machine HOUSE-STYLE
