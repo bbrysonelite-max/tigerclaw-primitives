@@ -44,3 +44,7 @@ This repo's tokens power the following shipped properties — do not change valu
 - Dashboard
 - Admin Dashboard
 - Brag Machine HOUSE-STYLE
+
+## Logo assets
+
+`assets/logo/` — the tiger mark as shipped by tigerclaw.io (grabbed from the live site icons 2026-07-23; the nav mark itself is inline in the JS bundle). Standing rule (Brent): anything we make that belongs in the primitives gets contributed back here.
